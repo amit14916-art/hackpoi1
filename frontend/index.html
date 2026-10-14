@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecOps DAST - AI-Powered Security Audit & Remediation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Navigation Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">🛡️</div>
+        <div>
+          <span class="brand-title">SecOps AI Guardian</span>
+          <span class="brand-tag">DAST & Audit SaaS</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-open-enterprise-modal" class="btn-secondary" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc;">
+          <span>🏢</span>
+          <span>Enterprise Hub</span>
+        </button>
+        <button id="btn-open-verify-modal" class="btn-secondary btn-verify">
+          <span>🔐</span>
+          <span>Domain Verification</span>
+        </button>
+        <a href="/docs" target="_blank" class="btn-secondary" style="text-decoration: none;">
+          <span>⚡</span>
+          <span>FastAPI Docs</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Scanner Hero & Trigger Box -->
+    <section class="scanner-hero">
+      <h1 class="hero-headline">
+        Automated Security Auditing with <br><span class="hero-gradient">AI-Powered Remediation</span>
+      </h1>
+      <p class="hero-sub">
+        Safely audit HTTP security headers, SSL/TLS certificates, CORS misconfigurations, and sensitive file exposures. Instant developer-ready patches generated for Nginx, Express, and Django.
+      </p>
+
+      <div class="scanner-box">
+        <form id="scan-form">
+          <div class="input-row">
+            <div class="url-input-wrapper">
+              <span class="url-input-icon">🌐</span>
+              <input 
+                type="text" 
+                id="target-url" 
+                class="url-input" 
+                placeholder="Enter target URL (e.g., https://example.com or http://localhost:8000)" 
+                required
+              >
+            </div>
+            <button type="submit" id="btn-start-scan" class="btn-primary">
+              <span>🚀</span>
+              <span>Launch Audit</span>
+            </button>
+          </div>
+
+          <div class="options-row">
+            <div class="scan-type-group">
+              <label class="radio-label">
+                <input type="radio" name="scan-type" value="passive" checked>
+                <span>Passive Recon (Safe & Fast)</span>
+              </label>
+              <label class="radio-label" title="Requires domain ownership verification via DNS TXT or HTTP file challenge">
+                <input type="radio" name="scan-type" value="active">
+                <span>Active DAST <small style="color: #38bdf8;">Requires Domain Verification</small></span>
+              </label>
+            </div>
+
+            <div class="framework-select-group">
+              <label for="framework-select">Remediation Target:</label>
+              <select id="framework-select" class="select-input">
+                <option value="auto">Auto-Detect</option>
+                <option value="nginx">Nginx</option>
+                <option value="apache">Apache</option>
+                <option value="express">Node.js (Express)</option>
+                <option value="django">Python (Django)</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Progress Indicator Banner (Hidden by default) -->
+    <div id="progress-box" class="progress-box hidden">
+      <div class="progress-header">
+        <div class="progress-status-text">
+          <span class="pulse-dot"></span>
+          <span id="current-step-label">Initializing Security Engines...</span>
+        </div>
+        <span id="progress-percent-label" class="progress-percent">0%</span>
+      </div>
+      <div class="progress-track">
+        <div id="progress-bar-fill" class="progress-fill" style="width: 0%"></div>
+      </div>
+      <p id="progress-desc" class="progress-desc">Executing safe probes, SSL validation, and AI contextual normalization.</p>
+    </div>
+
+    <!-- Scan Results Section (Hidden until scan finishes) -->
+    <main id="results-view" class="results-view hidden">
+      <!-- Scorecard Header -->
+      <div class="scorecard-container">
+        <div class="score-main-card">
+          <div class="score-badge-circle" id="score-grade-circle">
+            <span id="score-grade-text" class="score-grade">A+</span>
+            <span id="score-number-text" class="score-val">Score: 98 / 100</span>
+          </div>
+          <div class="score-details">
+            <h2 class="score-title" id="scan-domain-label">example.com</h2>
+            <div class="score-meta">
+              <span id="scan-meta-date" class="meta-tag">Date: -</span>
+              <span id="scan-meta-verified" class="meta-tag verified-badge">Verified Domain</span>
+              <span id="scan-meta-id" class="meta-tag">ID: -</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Severity Counter Stats -->
+        <div class="severity-summary-card">
+          <div class="stat-pills-row">
+            <div class="stat-pill critical">
+              <div id="stat-critical" class="stat-num">0</div>
+              <div class="stat-lbl">Critical</div>
+            </div>
+            <div class="stat-pill high">
+              <div id="stat-high" class="stat-num">0</div>
+              <div class="stat-lbl">High</div>
+            </div>
+            <div class="stat-pill medium">
+              <div id="stat-medium" class="stat-num">0</div>
+              <div class="stat-lbl">Medium</div>
+            </div>
+            <div class="stat-pill low">
+              <div id="stat-low" class="stat-num">0</div>
+              <div class="stat-lbl">Low</div>
+            </div>
+            <div class="stat-pill info">
+              <div id="stat-info" class="stat-num">0</div>
+              <div class="stat-lbl">Info</div>
+            </div>
+          </div>
+
+          <div class="export-actions-row">
+            <button id="btn-export-markdown" class="btn-secondary">
+              <span>📄</span>
+              <span>Markdown</span>
+            </button>
+            <button id="btn-export-html" class="btn-secondary">
+              <span>🖨️</span>
+              <span>Print / HTML</span>
+            </button>
+            <button id="btn-export-soc2" class="btn-secondary" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" title="Download SOC 2 Type II PDF Report">
+              <span>📑</span>
+              <span>SOC 2 PDF</span>
+            </button>
+            <button id="btn-export-iso27001" class="btn-secondary" style="border-color: rgba(168, 85, 247, 0.4); color: #c084fc;" title="Download ISO 27001:2022 PDF Report">
+              <span>🛡️</span>
+              <span>ISO 27001 PDF</span>
+            </button>
+            <button id="btn-export-json" class="btn-secondary">
+              <span>📦</span>
+              <span>Raw JSON</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Executive Briefing Callout -->
+      <div id="executive-brief-card" class="executive-brief-box">
+        <div class="brief-header">
+          <span>🧠</span>
+          <span>AI Executive Brief & Threat Analysis</span>
+        </div>
+        <div id="brief-content" class="brief-content">
+          Loading AI synthesis...
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-filter="all">All Findings (<span id="count-all">0</span>)</button>
+        <button class="tab-btn" data-filter="high-crit">Critical & High Only (<span id="count-high-crit">0</span>)</button>
+        <button class="tab-btn" data-filter="headers">Security Headers</button>
+        <button class="tab-btn" data-filter="ssl">SSL/TLS</button>
+        <button class="tab-btn" data-filter="sensitive">Sensitive Files</button>
+      </div>
+
+      <!-- Findings List -->
+      <div id="findings-container" class="finding-list">
+        <!-- Finding items will be dynamically injected here -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Domain Verification Modal (Legal Guardrail) -->
+  <div id="verify-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🔐</span>
+          <span>Domain Ownership Verification</span>
+        </div>
+        <button id="btn-close-verify-modal" class="btn-close">&times;</button>
+      </div>
+
+      <p class="modal-desc">
+        To prevent unauthorized vulnerability probing, Active DAST testing (SQLi error boundary checks, XSS canaries, and method tampering) is legally restricted to verified domain owners.
+      </p>
+
+      <div class="verify-form-group">
+        <label for="verify-domain-input">Domain or Hostname:</label>
+        <div class="input-row">
+          <input 
+            type="text" 
+            id="verify-domain-input" 
+            class="url-input" 
+            placeholder="e.g., example.com or app.internal.io"
+          >
+          <button id="btn-generate-challenge" class="btn-primary">Generate Token</button>
+        </div>
+      </div>
+
+      <div id="challenge-details" class="challenge-box hidden">
+        <div class="verify-instructions">
+          <strong>Method 1: HTTP File Upload (Fastest)</strong>
+          <p>Create a plain text file accessible publicly at:</p>
+          <code id="challenge-file-path" class="code-pill">/.well-known/security-check.txt</code>
+          <p style="margin-top: 8px;">Containing exactly:</p>
+          <div class="copy-row">
+            <span id="challenge-file-content">sec-verify=...</span>
+            <button class="btn-copy" onclick="navigator.clipboard.writeText(document.getElementById('challenge-file-content').innerText)">Copy Token</button>
+          </div>
+        </div>
+
+        <div class="verify-instructions">
+          <strong>Method 2: DNS TXT Record</strong>
+          <p>Add the following TXT record to your DNS zone:</p>
+          <div class="copy-row">
+            <span id="challenge-dns-name">_sec-verify.example.com</span>
+            <button class="btn-copy" onclick="navigator.clipboard.writeText(document.getElementById('challenge-dns-name').innerText)">Copy Host</button>
+          </div>
+          <div class="copy-row">
+            <span id="challenge-dns-value">sec-verify=...</span>
+            <button class="btn-copy" onclick="navigator.clipboard.writeText(document.getElementById('challenge-dns-value').innerText)">Copy Value</button>
+          </div>
+        </div>
+
+        <button id="btn-verify-now" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 16px;">
+          <span>✅</span>
+          <span>Verify Ownership Now</span>
+        </button>
+      </div>
+
+      <div id="verify-alert" class="verify-alert"></div>
+    </div>
+  </div>
+
+  <!-- Enterprise Hub Modal -->
+  <div id="enterprise-modal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width: 640px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🏢</span>
+          <span>Enterprise Management Hub</span>
+        </div>
+        <button id="btn-close-enterprise-modal" class="btn-close">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 12px;">
+        <!-- Auth & API Key Section -->
+        <div style="background: rgba(15, 23, 42, 0.6); padding: 16px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.2);">
+          <strong style="color: #38bdf8;">🔑 Organization Authentication (RBAC)</strong>
+          <p style="font-size: 13px; color: #94a3b8; margin: 6px 0 10px 0;">Configure your Organization ID and API Key to access enterprise fleet monitoring, continuous scanning, and automated PRs.</p>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="cfg-org-id" class="url-input" placeholder="Org ID (default: default-org)" style="font-size: 13px;">
+            <input type="password" id="cfg-api-key" class="url-input" placeholder="API Key (secops_live_...)" style="font-size: 13px;">
+            <button id="btn-save-auth" class="btn-primary" style="padding: 0 16px; font-size: 13px;">Save</button>
+          </div>
+          <span id="auth-status-lbl" style="font-size: 12px; color: #22c55e; margin-top: 6px; display: block;"></span>
+        </div>
+
+        <!-- GitHub App Connect Section -->
+        <div style="background: rgba(15, 23, 42, 0.6); padding: 16px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.2);">
+          <strong style="color: #c084fc;">🐙 Feature 1: GitHub App Auto-PR Remediation</strong>
+          <p style="font-size: 13px; color: #94a3b8; margin: 6px 0 10px 0;">Connect your organization's GitHub App to auto-create remediation PRs with AI patches on verified scan completion.</p>
+          <button id="btn-connect-github" class="btn-secondary" style="border-color: #a855f7; color: #c084fc;">
+            <span>🔗</span>
+            <span>Connect GitHub App</span>
+          </button>
+        </div>
+
+        <!-- CI/CD Webhook & Slack Alerts Section -->
+        <div style="background: rgba(15, 23, 42, 0.6); padding: 16px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">
+          <strong style="color: #60a5fa;">🚀 Feature 2: CI/CD Continuous Scanning & Slack</strong>
+          <p style="font-size: 13px; color: #94a3b8; margin: 6px 0 10px 0;">Deploy Webhook URL for GitHub Actions / GitLab CI:</p>
+          <code id="deploy-webhook-url" class="code-pill" style="display: block; word-break: break-all; margin-bottom: 12px;">http://localhost:8000/api/webhooks/deploy/default-org</code>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="cfg-slack-url" class="url-input" placeholder="Slack Incoming Webhook URL" style="font-size: 13px;">
+            <button id="btn-save-slack" class="btn-secondary" style="font-size: 13px;">Save Slack</button>
+          </div>
+          <span id="slack-status-lbl" style="font-size: 12px; color: #22c55e; margin-top: 6px; display: block;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
